@@ -3,7 +3,7 @@
     internal class ByteDecomposerADS1115 : ByteDecomposer
     {
         public override int SamplingFrequency => 240;
-        public override int BaudRate => 115200;
+        public override int BaudRate => 9600;
         public override int BytesInPacket => 3;
         public override int MaxNoDataCounter => 10;
         public override int StartSearchMaxLevel => 20;
@@ -14,7 +14,7 @@
 
         public ByteDecomposerADS1115(DataArrays data) : base(data, _queueForDCSize, _queueForACSize)
         {
-            ZeroLine = 18;
+            ZeroLine = 960;
         }
 
         public override int Decompos(USBserialPort usbport, Stream saveFileStream, StreamWriter txtFileStream)
@@ -62,36 +62,77 @@
                             tmpValue -= 0x10000;
                         }
 
-                        QueueForZero.Enqueue(tmpValue);
-                        if (QueueForZero.Count > sizeQForZero)
+                        QueuePressureForZero.Enqueue(tmpValue);
+                        if (QueuePressureForZero.Count > sizeQForZero)
                         {
-                            QueueForZero.Dequeue();
-                            tmpZero = (int)QueueForZero.Average();
+                            QueuePressureForZero.Dequeue();
+                            tmpZero = (int)QueuePressureForZero.Average();
                         }
 
                         tmpValue -= ZeroLine;
                         //Очередь для выделения постоянной составляющей
-                        QueueForDC.Enqueue(tmpValue);
-                        if (QueueForDC.Count > _queueForDCSize)
+                        QueuePressureForDC.Enqueue(tmpValue);
+                        if (QueuePressureForDC.Count > _queueForDCSize)
                         {
-                            QueueForDC.Dequeue();
+                            QueuePressureForDC.Dequeue();
                         }
 
-                        //Массив исходных данный - смещение
-                        Data.RealTimeArray[MainIndex] = tmpValue;
+                        Data.RealTimePressureArray[MainIndex] = tmpValue;
                         //Массив постоянной составляющей
-                        Data.DCArray[MainIndex] = (int)QueueForDC.Average();
+                        Data.DCArray[MainIndex] = (int)QueuePressureForDC.Average();
 
                         //Очередь - переменная составляющая
-                        QueueForAC.Enqueue(tmpValue - (int)QueueForDC.Average());
-                        if (QueueForAC.Count > _queueForACSize)
+                        QueuePressureForAC.Enqueue(tmpValue - (int)QueuePressureForDC.Average());
+                        if (QueuePressureForAC.Count > _queueForACSize)
                         {
-                            QueueForAC.Dequeue();
+                            QueuePressureForAC.Dequeue();
                         }
 
                         //Массив переменной составляющей
-                        Data.PressureViewArray[MainIndex] = (int)QueueForAC.Average();
+                        Data.PressureViewArray[MainIndex] = (int)QueuePressureForAC.Average();
+                        byteNum = 3;
+                        break;
+                    case 3:
+                        tmpValue = usbport.PortBuf[i];
+                        byteNum = 4;
+                        break;
+                    case 4:
+                        tmpValue += 0x100 * usbport.PortBuf[i];
+                        if ((tmpValue & 0x8000) != 0)
+                        {
+                            tmpValue -= 0x10000;
+                        }
 
+                        QueueTemperatureForZero.Enqueue(tmpValue);
+                        if (QueueTemperatureForZero.Count > sizeQForZero)
+                        {
+                            QueueTemperatureForZero.Dequeue();
+                            tmpZero = (int)QueueTemperatureForZero.Average();
+                        }
+
+                        tmpValue -= ZeroLine;
+                        //Очередь для выделения постоянной составляющей
+                        QueueTemperatureForDC.Enqueue(tmpValue);
+                        if (QueueTemperatureForDC.Count > _queueForDCSize)
+                        {
+                            QueueTemperatureForDC.Dequeue();
+                        }
+
+                        Data.RealTimeTemperatureArray[MainIndex] = tmpValue;
+                        //Массив постоянной составляющей
+                        Data.DCArray[MainIndex] = (int)QueueTemperatureForDC.Average();
+
+                        //Очередь - переменная составляющая
+                        QueueTemperatureForAC.Enqueue(tmpValue - (int)QueueTemperatureForDC.Average());
+                        if (QueueTemperatureForAC.Count > _queueForACSize)
+                        {
+                            QueueTemperatureForAC.Dequeue();
+                        }
+
+                        //Массив переменной составляющей
+                        Data.TemperatureViewArray[MainIndex] = (int)QueueTemperatureForAC.Average();
+
+                        Data.ViewArray[MainIndex] = Data.PressureViewArray[MainIndex] - Data.TemperatureViewArray[MainIndex];
                         byteNum = 0;
 
                         if (RecordStarted)

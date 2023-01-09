@@ -40,9 +40,12 @@ namespace TTestApp.Decomposers
         protected int byteNum;
 
         //Очереди для усреднения скользящим окном
-        protected Queue<int> QueueForDC;
-        protected Queue<int> QueueForAC;
-        protected Queue<int> QueueForZero;
+        protected Queue<int> QueuePressureForDC;
+        protected Queue<int> QueuePressureForAC;
+        protected Queue<int> QueuePressureForZero;
+        protected Queue<int> QueueTemperatureForDC;
+        protected Queue<int> QueueTemperatureForAC;
+        protected Queue<int> QueueTemperatureForZero;
 
         protected int sizeQForZero = 10;
 
@@ -54,9 +57,12 @@ namespace TTestApp.Decomposers
             MainIndex = 0;
             noDataCounter = 0;
             byteNum = 0;
-            QueueForDC = new Queue<int>(sizeQForDC);
-            QueueForAC = new Queue<int>(sizeQForAC);
-            QueueForZero = new Queue<int>(sizeQForZero);
+            QueuePressureForDC = new Queue<int>(sizeQForDC);
+            QueuePressureForAC = new Queue<int>(sizeQForAC);
+            QueuePressureForZero = new Queue<int>(sizeQForZero);
+            QueueTemperatureForDC = new Queue<int>(sizeQForDC);
+            QueueTemperatureForAC = new Queue<int>(sizeQForAC);
+            QueueTemperatureForZero = new Queue<int>(sizeQForZero);
         }
 
         protected virtual void OnDecomposeLineEvent()
@@ -66,7 +72,7 @@ namespace TTestApp.Decomposers
                 new PacketEventArgs
                 {
                     DCValue = Data.DCArray[MainIndex],
-                    RealTimeValue = Data.RealTimeArray[MainIndex],
+                    RealTimeValue = Data.RealTimePressureArray[MainIndex],
                     PressureViewValue = Data.PressureViewArray[MainIndex],
                     PacketCounter = PacketCounter,
                     MainIndex = MainIndex

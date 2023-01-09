@@ -17,7 +17,7 @@ namespace TTestApp
         Patient CurrentPatient;
         int CurrentFileSize;
         const string TmpDataFile = "tmpdata.t";
-        int MaxValue = 200;   // Для ADS1115
+        int MaxValue = 150;   // Для ADS1115
         bool ViewMode = false;
         int ViewShift;
         double ScaleY = 1;
@@ -190,6 +190,8 @@ namespace TTestApp
             else
             {
                 ArrayList.Add(DataA.PressureViewArray);
+                ArrayList.Add(DataA.TemperatureViewArray);
+                ArrayList.Add(DataA.ViewArray);
             }
             Painter.Paint(ViewMode, ViewShift, ArrayList, VisirList, ScaleY, MaxValue, e);
         }
@@ -222,7 +224,6 @@ namespace TTestApp
             {
                 return;
             }
-            DataA.CountViewArrays(BufPanel);
             BufPanel.Refresh();
         }
 
@@ -260,9 +261,9 @@ namespace TTestApp
             MaxPressure = (int)Math.Max(CurrentPressure, MaxPressure);            
             if (currentIndex > 0)
             {
-                labCurrentPressure.Text = "Current pressure, mmHG: " +
-                                           DataProcessing.ValueToMmhG(CurrentPressure).ToString() + " " +
-                                           DataA.DCArray[currentIndex].ToString();
+                labCurrentPressure.Text = "Current value: " +
+                                           e.RealTimeValue.ToString() + " " +
+                                           e.PacketCounter.ToString();
 //                labCurrentPressure.Text = "Current : " + (DataA.RealTimeArray[Decomposer.MainIndex - 1]).ToString() + " Max : " + 
 //                    MaxPressure.ToString();
             }

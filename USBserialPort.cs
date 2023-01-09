@@ -130,6 +130,9 @@ namespace TTestApp
 
         private string[] GetPortsNames()
         {
+            const string ArduinoSerialString0 = "Serial0";
+            const string ArduinoSerialString = "Serial";
+
             RegistryKey r_hklm = Registry.LocalMachine;
             RegistryKey r_hard = r_hklm.OpenSubKey("HARDWARE");
             RegistryKey r_device = r_hard.OpenSubKey("DEVICEMAP");
@@ -144,7 +147,7 @@ namespace TTestApp
             int Ind = 0;
             for (int i = 0; i < portvalues.Length; i++)
             {
-                if (portvalues[i].IndexOf(_connectString) >= 0)
+                if (portvalues[i].IndexOf(ArduinoSerialString) >= 0 && portvalues[i].IndexOf(ArduinoSerialString0) < 0)
                 {
                     portNames.Add((string)r_port.GetValue(portvalues[i]));
                     Ind++;
