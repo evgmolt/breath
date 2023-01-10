@@ -1,4 +1,6 @@
-﻿namespace TTestApp
+﻿using TTestApp.Decomposers;
+
+namespace TTestApp
 {
     class WaveDetector
     {
@@ -10,13 +12,13 @@
         private int _currentInterval;
         private double _detectLevel = Constants.MinDetectLevel;
         private double _maxD;
-        private int _prevIndex;
+        private uint _prevIndex;
         private int _prevInterval;
         private int _numOfNN;
         private double _detectLevelCoeff;
         private int _lastInterval;
         private double _currentValue;
-        private int _currentIndex;
+        private uint _currentIndex;
 
         public EventHandler<WaveDetectorEventArgs> OnWaveDetected;
 
@@ -35,7 +37,7 @@
                 WaveCount = Intervals.Count,
                 BreathFreq = _breathFreq,
                 Interval = _lastInterval,
-                Index = _currentIndex
+                Index = (int)_currentIndex
             };
             OnWaveDetected?.Invoke(this, args);
         }
@@ -49,7 +51,7 @@
             Arrhythmia = 0;
         }
 
-        public double Detect(double[] dataArr, int index, int IndexOfMax)
+        public double Detect(double[] dataArr, uint index, uint IndexOfMax)
         {
             if (index == IndexOfMax)
             {
@@ -58,7 +60,7 @@
             return Detect(dataArr, index);
         }
 
-        public double Detect(double[] dataArr, int index)
+        public double Detect(double[] dataArr, uint index)
         {
             _currentIndex = index;
             _currentInterval++;
@@ -76,25 +78,25 @@
                 return _detectLevel;
             }
 
-            _currentValue = dataArr[index - 1];
+            _currentValue = dataArr[(index - 1) & ByteDecomposer.DataArrSize - 1];
             if (_currentValue > _detectLevel)
             {
                 _maxD = Math.Max((int)_currentValue, _maxD);
                 if (_maxD > _currentValue)
                 {
-                    int tmpNN = 0;
+                    uint tmpNN = 0;
                     if (_prevIndex > 0)
                     {
-                        tmpNN = (index - 1) - _prevIndex;
+                        tmpNN = (index - 1 - _prevIndex) & ByteDecomposer.DataArrSize - 1;
                     }
-                    _lastInterval = tmpNN;
-                    Intervals.Enqueue(tmpNN);
+                    _lastInterval = (int)tmpNN;
+                    Intervals.Enqueue(_lastInterval);
                     if (Intervals.Count > QSize)
                     {
                         Intervals.Dequeue();
                     }
                     _breathFreq = (int)Intervals.Average();
-                    Constants.LockInterval = tmpNN / 2;
+                    Constants.LockInterval = _lastInterval / 2;
                     NewWaveDetected();
                     _currentInterval = 0;
                     _prevIndex = index - 1;

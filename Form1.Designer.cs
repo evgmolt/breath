@@ -33,14 +33,11 @@
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.panel1 = new System.Windows.Forms.Panel();
             this.labBreath = new System.Windows.Forms.Label();
-            this.progressBarRecord = new System.Windows.Forms.ProgressBar();
             this.butFlow = new System.Windows.Forms.Button();
-            this.labRecordSize = new System.Windows.Forms.Label();
-            this.butStartRecord = new System.Windows.Forms.Button();
-            this.butStopRecord = new System.Windows.Forms.Button();
             this.panelGraph = new System.Windows.Forms.Panel();
             this.trackBarAmp = new System.Windows.Forms.TrackBar();
             this.panelBottom = new System.Windows.Forms.Panel();
+            this.labBreathFreq = new System.Windows.Forms.Label();
             this.butCalibration = new System.Windows.Forms.Button();
             this.labCurrentPressure = new System.Windows.Forms.Label();
             this.panel2 = new System.Windows.Forms.Panel();
@@ -51,7 +48,6 @@
             this.timerRead = new System.Windows.Forms.Timer(this.components);
             this.timerStatus = new System.Windows.Forms.Timer(this.components);
             this.timerPaint = new System.Windows.Forms.Timer(this.components);
-            this.labBreathFreq = new System.Windows.Forms.Label();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarAmp)).BeginInit();
@@ -86,11 +82,7 @@
             // 
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panel1.Controls.Add(this.labBreath);
-            this.panel1.Controls.Add(this.progressBarRecord);
             this.panel1.Controls.Add(this.butFlow);
-            this.panel1.Controls.Add(this.labRecordSize);
-            this.panel1.Controls.Add(this.butStartRecord);
-            this.panel1.Controls.Add(this.butStopRecord);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(3, 3);
             this.panel1.Name = "panel1";
@@ -102,20 +94,11 @@
             this.labBreath.AutoSize = true;
             this.labBreath.CausesValidation = false;
             this.labBreath.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.labBreath.Location = new System.Drawing.Point(22, 283);
+            this.labBreath.Location = new System.Drawing.Point(8, 466);
             this.labBreath.Name = "labBreath";
             this.labBreath.Size = new System.Drawing.Size(19, 21);
             this.labBreath.TabIndex = 7;
             this.labBreath.Text = "B";
-            // 
-            // progressBarRecord
-            // 
-            this.progressBarRecord.Location = new System.Drawing.Point(22, 214);
-            this.progressBarRecord.Name = "progressBarRecord";
-            this.progressBarRecord.Size = new System.Drawing.Size(85, 23);
-            this.progressBarRecord.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
-            this.progressBarRecord.TabIndex = 4;
-            this.progressBarRecord.Visible = false;
             // 
             // butFlow
             // 
@@ -126,36 +109,6 @@
             this.butFlow.Text = "Stop stream";
             this.butFlow.UseVisualStyleBackColor = true;
             this.butFlow.Click += new System.EventHandler(this.butFlow_Click);
-            // 
-            // labRecordSize
-            // 
-            this.labRecordSize.AutoSize = true;
-            this.labRecordSize.Location = new System.Drawing.Point(24, 240);
-            this.labRecordSize.Name = "labRecordSize";
-            this.labRecordSize.Size = new System.Drawing.Size(72, 15);
-            this.labRecordSize.TabIndex = 2;
-            this.labRecordSize.Text = "Record size :";
-            // 
-            // butStartRecord
-            // 
-            this.butStartRecord.AccessibleRole = System.Windows.Forms.AccessibleRole.None;
-            this.butStartRecord.Location = new System.Drawing.Point(22, 111);
-            this.butStartRecord.Name = "butStartRecord";
-            this.butStartRecord.Size = new System.Drawing.Size(85, 23);
-            this.butStartRecord.TabIndex = 0;
-            this.butStartRecord.Text = "New record";
-            this.butStartRecord.UseVisualStyleBackColor = true;
-            this.butStartRecord.Click += new System.EventHandler(this.butStartRecord_Click);
-            // 
-            // butStopRecord
-            // 
-            this.butStopRecord.Location = new System.Drawing.Point(22, 140);
-            this.butStopRecord.Name = "butStopRecord";
-            this.butStopRecord.Size = new System.Drawing.Size(85, 23);
-            this.butStopRecord.TabIndex = 1;
-            this.butStopRecord.Text = "Stop record";
-            this.butStopRecord.UseVisualStyleBackColor = true;
-            this.butStopRecord.Click += new System.EventHandler(this.butStopRecord_Click);
             // 
             // panelGraph
             // 
@@ -187,6 +140,17 @@
             this.panelBottom.Name = "panelBottom";
             this.panelBottom.Size = new System.Drawing.Size(1014, 64);
             this.panelBottom.TabIndex = 3;
+            // 
+            // labBreathFreq
+            // 
+            this.labBreathFreq.AutoSize = true;
+            this.labBreathFreq.CausesValidation = false;
+            this.labBreathFreq.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.labBreathFreq.Location = new System.Drawing.Point(339, 20);
+            this.labBreathFreq.Name = "labBreathFreq";
+            this.labBreathFreq.Size = new System.Drawing.Size(66, 21);
+            this.labBreathFreq.TabIndex = 7;
+            this.labBreathFreq.Text = "Breath : ";
             // 
             // butCalibration
             // 
@@ -273,17 +237,6 @@
             this.timerPaint.Enabled = true;
             this.timerPaint.Tick += new System.EventHandler(this.timerPaint_Tick);
             // 
-            // labBreathFreq
-            // 
-            this.labBreathFreq.AutoSize = true;
-            this.labBreathFreq.CausesValidation = false;
-            this.labBreathFreq.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.labBreathFreq.Location = new System.Drawing.Point(339, 20);
-            this.labBreathFreq.Name = "labBreathFreq";
-            this.labBreathFreq.Size = new System.Drawing.Size(66, 21);
-            this.labBreathFreq.TabIndex = 7;
-            this.labBreathFreq.Text = "Breath : ";
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -322,14 +275,10 @@
         private TrackBar trackBarAmp;
         private Panel panel2;
         private Panel panel3;
-        private Button butStopRecord;
-        private Button butStartRecord;
         private System.Windows.Forms.Timer timerStatus;
         private System.Windows.Forms.Timer timerPaint;
         private Label labCurrentPressure;
         private Button butFlow;
-        private Label labRecordSize;
-        private ProgressBar progressBarRecord;
         private Label labPort;
         private Button butCalibration;
         private Label labBreath;

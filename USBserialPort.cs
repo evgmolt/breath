@@ -21,19 +21,21 @@ namespace TTestApp
 
         private readonly int _portBufSize = 10000;
         private readonly int _baudRate;
-        private readonly string _connectString;
+        private readonly string _connectionString;
+        private readonly string _wrongConnectionString = "???";
 
         public event Action<Exception> ConnectionFailure;
         public event Action ConnectionOk;
         public event Action<Message> WindowsMessage;
 
-        private string logFile = "log.txt";
-
-        
-        public USBserialPort(IMessageHandler messageHandler, int baudrate)
+        public USBserialPort(IMessageHandler messageHandler, int baudrate, string[] connStrings)
         {
             _baudRate = baudrate;
-            _connectString = "USBSER";
+            _connectionString = connStrings[0];
+            if (connStrings.Length > 1)
+            {
+                _wrongConnectionString = connStrings[1];
+            }
             messageHandler.WindowsMessage += OnMessage;
             ReadEnabled = false;
             PortBuf = new byte[_portBufSize];
@@ -100,12 +102,10 @@ namespace TTestApp
        
         public void Connect()
         {
-            File.WriteAllLines(logFile, new string[1] { "Start connect"});
             PortNames = GetPortsNames();
             if (PortNames == null) return;
             for (int i = 0; i < PortNames.Length; i++)
             {
-                File.AppendAllLines(logFile, new string[1] { "new Serial port" });
                 PortHandle = new SerialPort(PortNames[i], _baudRate)
                 {
                     DataBits = 8,
@@ -130,9 +130,6 @@ namespace TTestApp
 
         private string[] GetPortsNames()
         {
-            const string ArduinoSerialString0 = "Serial0";
-            const string ArduinoSerialString = "Serial";
-
             RegistryKey r_hklm = Registry.LocalMachine;
             RegistryKey r_hard = r_hklm.OpenSubKey("HARDWARE");
             RegistryKey r_device = r_hard.OpenSubKey("DEVICEMAP");
@@ -141,19 +138,16 @@ namespace TTestApp
             {
                 return null;
             }
-            File.AppendAllLines(logFile, new string[1] { "port.GetValueNames" });
             string[] portvalues = r_port.GetValueNames();
+            File.WriteAllLines("ports.txt", portvalues);
             List<string> portNames = new List<string>();
-            int Ind = 0;
             for (int i = 0; i < portvalues.Length; i++)
             {
-                if (portvalues[i].IndexOf(ArduinoSerialString) >= 0 && portvalues[i].IndexOf(ArduinoSerialString0) < 0)
+                if (portvalues[i].IndexOf(_connectionString) >= 0 && portvalues[i].IndexOf(_wrongConnectionString) < 0)
                 {
                     portNames.Add((string)r_port.GetValue(portvalues[i]));
-                    Ind++;
                 }
             }
-//            File.AppendAllLines(logFile, new string[1] { portNames[0].ToString() });
             return portNames.ToArray();
         }
 

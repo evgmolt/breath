@@ -10,14 +10,10 @@ namespace TTestApp
     {
         private void timerStatus_Tick(object sender, EventArgs e)
         {
-
-
             if (Decomposer is null)
             {
                 return;
             }
-            butStartRecord.Enabled = !ViewMode && !Decomposer.RecordStarted!;
-            butStopRecord.Enabled = Decomposer.RecordStarted;
             butFlow.Text = ViewMode ? "Start stream" : "Stop stream";
 
             //            labDeviceIsOff.Visible = !decomposer.DeviceTurnedOn;
